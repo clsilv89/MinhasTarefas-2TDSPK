@@ -1,4 +1,4 @@
-package com.example.minhastarefas
+package com.example.minhastarefas.model
 
 data class Tarefa(
     val descricao: String,

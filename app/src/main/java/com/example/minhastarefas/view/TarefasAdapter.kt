@@ -1,4 +1,4 @@
-package com.example.minhastarefas
+package com.example.minhastarefas.view
 
 import android.view.LayoutInflater
 import android.view.ViewGroup
@@ -7,18 +7,26 @@ import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
 import com.example.minhastarefas.databinding.ItemTarefaCompletaBinding
 import com.example.minhastarefas.databinding.ItemTarefaNaoCompletaBinding
+import com.example.minhastarefas.model.Tarefa
 
 class TarefasAdapter : ListAdapter<Tarefa, RecyclerView.ViewHolder>(DiffCallback()) {
 
     var onClick: (Tarefa) -> Unit = {}
+    var onLongClick: (Tarefa) -> Unit = {}
 
     inner class TarefasViewHolder(val binding: ItemTarefaNaoCompletaBinding) :
         RecyclerView.ViewHolder(binding.root) {
         fun bind(tarefa: Tarefa) {
             binding.textViewDescricaoTarefa.text = tarefa.descricao
-            binding.root.setOnClickListener {
-                notifyDataSetChanged()
+            binding.radioButtonTarefaNaoCompleta.isChecked = tarefa.completa
+            binding.radioButtonTarefaNaoCompleta.setOnClickListener {
                 onClick(tarefa)
+                notifyDataSetChanged()
+            }
+            binding.textViewDescricaoTarefa.setOnLongClickListener {
+                onLongClick(tarefa)
+
+                return@setOnLongClickListener true
             }
         }
     }
@@ -27,9 +35,15 @@ class TarefasAdapter : ListAdapter<Tarefa, RecyclerView.ViewHolder>(DiffCallback
         RecyclerView.ViewHolder(binding.root) {
         fun bind(tarefa: Tarefa) {
             binding.textViewDescricaoTarefa.text = tarefa.descricao
-            binding.root.setOnClickListener {
-                notifyDataSetChanged()
+            binding.radioButtonTarefaCompleta.isChecked = tarefa.completa
+            binding.radioButtonTarefaCompleta.setOnClickListener {
                 onClick(tarefa)
+                notifyDataSetChanged()
+            }
+            binding.textViewDescricaoTarefa.setOnLongClickListener {
+                onLongClick(tarefa)
+
+                return@setOnLongClickListener true
             }
         }
     }

@@ -1,4 +1,4 @@
-package com.example.minhastarefas
+package com.example.minhastarefas.view
 
 import android.os.Bundle
 import androidx.fragment.app.Fragment
