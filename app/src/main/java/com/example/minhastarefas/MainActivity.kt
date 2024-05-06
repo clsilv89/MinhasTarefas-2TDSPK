@@ -1,6 +1,7 @@
 package com.example.minhastarefas
 
 import android.content.Context
+import android.content.SharedPreferences
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.widget.Toast
@@ -9,18 +10,23 @@ import androidx.navigation.NavController
 import androidx.navigation.fragment.findNavController
 import androidx.navigation.ui.setupActionBarWithNavController
 import com.example.minhastarefas.databinding.ActivityMainBinding
+import com.google.gson.GsonBuilder
 
 class MainActivity : AppCompatActivity() {
 
     private lateinit var binding: ActivityMainBinding
     private lateinit var navController: NavController
+    private lateinit var sharedPrefs: SharedPreferences
     private val listaTarefas = arrayListOf<Tarefa>()
     private val categorias = arrayListOf<String>()
+    private val gson = GsonBuilder().create()
+    val adapter = TarefasAdapter()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
         binding = ActivityMainBinding.inflate(layoutInflater)
+        sharedPrefs = this.getPreferences(Context.MODE_PRIVATE)
         setContentView(binding.root)
 
         val navHostFragment = supportFragmentManager.findFragmentById(binding.navHostFragment.id)
@@ -39,8 +45,12 @@ class MainActivity : AppCompatActivity() {
                 }
             }
         })
-        Toast.makeText(this, recuperarDadosNoApp(), Toast.LENGTH_SHORT).show()
-//        abrirTelaListaTarefas()
+        recuperarDadosNoApp()
+        adapter.onClick  = {
+            val index = listaTarefas.indexOf(it)
+            listaTarefas[index].completa = !listaTarefas[index].completa
+            salvaDadosNoApp(listaTarefas)
+        }
     }
 
     override fun onSupportNavigateUp(): Boolean {
@@ -74,47 +84,17 @@ class MainActivity : AppCompatActivity() {
         return hashTags
     }
 
-    private fun recuperarDadosNoApp(): String {
-        val sharedPrefs = this.getPreferences(Context.MODE_PRIVATE)
+    private fun recuperarDadosNoApp() {
+        val jsonString = sharedPrefs.getString("TAREFAS", "")
+        val lista = gson.fromJson(jsonString, Array<Tarefa>::class.java)
 
-        return sharedPrefs.getString("TAREFA", "").orEmpty()
+        listaTarefas.addAll(lista)
+        adapter.submitList(listaTarefas)
     }
 
     private fun salvaDadosNoApp(tarefas: List<Tarefa>) {
-        val sharedPrefs = this.getPreferences(Context.MODE_PRIVATE)
-
-        sharedPrefs.edit().putString("TAREFA", tarefas[0].descricao).apply()
+        adapter.submitList(tarefas)
+        val jsonString = gson.toJson(tarefas)
+        sharedPrefs.edit().putString("TAREFAS", jsonString).apply()
     }
-
-//    override fun onBackPressed() {
-//        navController.navigateUp()
-//    }
-
-//    private fun abrirTelaListaTarefas() {
-//        val listaTarefasFragment = ListaTarefasFragment.newInstance({
-//            abrirTelaCriarTarefas()
-//        }, "")
-//
-//        supportFragmentManager.beginTransaction().replace(
-//            binding.frameLayout.id,
-//            listaTarefasFragment
-//        ).commit()
-//    }
-//
-//    private fun abrirTelaCriarTarefas() {
-//        val listaTarefas = arrayListOf<Tarefa>()
-//        val criaTarefasFragment = CriaTarefasFragment.newInstance({
-//            val tarefa = Tarefa(
-//                descricao = it,
-//                completa = false
-//            )
-//            listaTarefas.add(tarefa)
-//            println(tarefa)
-//        }, "")
-//
-//        supportFragmentManager.beginTransaction().replace(
-//            binding.frameLayout.id,
-//            criaTarefasFragment
-//        ).commit()
-//    }
 }
