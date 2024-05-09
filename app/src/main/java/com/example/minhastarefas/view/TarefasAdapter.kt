@@ -21,7 +21,6 @@ class TarefasAdapter : ListAdapter<Tarefa, RecyclerView.ViewHolder>(DiffCallback
             binding.radioButtonTarefaNaoCompleta.isChecked = tarefa.completa
             binding.radioButtonTarefaNaoCompleta.setOnClickListener {
                 onClick(tarefa)
-                notifyDataSetChanged()
             }
             binding.textViewDescricaoTarefa.setOnLongClickListener {
                 onLongClick(tarefa)
@@ -38,7 +37,6 @@ class TarefasAdapter : ListAdapter<Tarefa, RecyclerView.ViewHolder>(DiffCallback
             binding.radioButtonTarefaCompleta.isChecked = tarefa.completa
             binding.radioButtonTarefaCompleta.setOnClickListener {
                 onClick(tarefa)
-                notifyDataSetChanged()
             }
             binding.textViewDescricaoTarefa.setOnLongClickListener {
                 onLongClick(tarefa)
